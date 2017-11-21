@@ -11,7 +11,7 @@ classroom=
 
 # ${n^^} turns the value of $n into caps.
 # Bash doesn't have pointers per se, but you can store in $classroom a string
-# which we will use later on. $m[@] means "all the elements of the array m".
+# which we will use later on. $m[@] returns all the elements of the array $m.
 case ${1^^} in
   A)
     classroom="${1^^}[@]"
