@@ -1,0 +1,48 @@
+#!/bin/bash
+
+load=
+unload=
+
+if [[ "$(which modprobe)" ]]; then
+  load="modprobe"
+  unload="modprobe -r"
+else
+  load="insmod"
+  unload="rmmod"
+fi
+
+case "$1" in
+  '')
+    echo 'No module inserted.'
+    exit 1
+    ;;
+  *)
+    mod_list="find /lib/modules/$(uname -r)/kernel -type f -printf '%f\n'"
+    if [[ "$($mod_list | grep "$1" &> /dev/null)" ]]; then
+      continue
+    else
+      echo "$1 isn't installed."
+      exit 1
+    fi
+    ;;
+esac
+
+if lsmod | grep "$1" &> /dev/null; then
+  echo "$1 is loaded."
+  read -n 1 -p "Do you want to remove it? [y/N]"
+  echo
+  if [[ "$REPLY" =~ ^[Yy]$ ]]; then
+    $unload $1
+  else
+    exit 1
+  fi
+else
+  echo "$1 is not loaded."
+  read -n 1 -p "Do you want to load it? [y/N]"
+  echo
+  if [[ "$REPLY" =~ ^[Yy]$ ]]; then
+    $unload $1
+  else
+    exit 1
+  fi
+fi
