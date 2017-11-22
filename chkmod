@@ -1,8 +1,5 @@
 #!/bin/bash
 
-load=
-unload=
-
 if [[ "$(which modprobe)" ]]; then
   load="modprobe"
   unload="modprobe -r"
@@ -13,15 +10,15 @@ fi
 
 case "$1" in
   '')
-    echo 'No module inserted.'
-    exit 1
+    echo 'No module passed to the script.' >&2
+    exit 2
     ;;
   *)
     mod_list="find /lib/modules/$(uname -r)/kernel -type f -printf '%f\n'"
     if [[ "$($mod_list | grep "$1" &> /dev/null)" ]]; then
       continue
     else
-      echo "$1 isn't installed."
+      echo "$1 isn't installed or isn't a valid module." >&2
       exit 1
     fi
     ;;

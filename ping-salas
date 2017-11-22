@@ -28,7 +28,7 @@ case "${1^^}" in
   *)
     echo 'Please use a valid option:'
     echo 'A    E    F    ET'
-    exit 1
+    exit 2
     ;;
 esac
 
