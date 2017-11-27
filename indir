@@ -2,36 +2,46 @@
 
 # Internal Field Separator
 IFS=':'
-for dir in $PATH; do
-  echo $dir
-done
 
-while getopts ':f:c:hv' OPTION; do
+list_files() {
+  for file in $1/*; do
+    if [[ -x $file ]]; then
+      echo "  $file"
+    fi
+  done
+}
+
+while getopts ':f:' OPTION; do
   case "$OPTION" in
-    f)
-      classroom=$OPTARG
-      ;;
-    c)
-      comm="${OPTARG^^}[@]"
-      ;;
-    h)
-      echo "Usage: $(basename $0) [-v] [-h] [-f name] [-c 'command']" >&2
-      exit 0
-      ;;
-    v)
-      echo 'MA-MA MASIVO.' >&2
-      echo 'Command line utility for massive working. Version 0.2' >&2
-      exit 0
+    d)
+      dir="$OPTARG"
       ;;
     :)
       echo "Missing argument for $OPTARG" >&2
-      echo "Usage: $(basename $0) [-v] [-h] [-f name] [-c 'command']" >&2
       exit 2
       ;;
     ?)
       echo "Invalid flag." >&2
-      echo "Usage: $(basename $0) [-v] [-h] [-f name] [-c 'command']" >&2
       exit 2
       ;;
   esac
 done
+
+if [[ "$dir" ]]; then
+  # =~ compares the two elements using regex.
+  if [[ "${PATH[@]}" =~ "$dir" ]]; then
+    echo "\$PATH contains $dir"
+
+    list_files $dir
+
+  else
+    echo "\$PATH doesn't contain $dir"
+  fi
+else
+  for directory in $PATH; do
+    echo "$directory"
+
+    list_files $directory
+
+  done
+fi
