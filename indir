@@ -1,17 +1,18 @@
 #!/bin/bash
 
-A=({2..26})
-E=({27..51})
-F=({52..76})
-ET=({77..100})
+# Internal Field Separator
+IFS=':'
+for dir in $PATH; do
+  echo $dir
+done
 
 while getopts ':f:c:hv' OPTION; do
   case "$OPTION" in
     f)
-      classroom="${OPTARG^^}[@]"
+      classroom=$OPTARG
       ;;
     c)
-      comm="$OPTARG"
+      comm="${OPTARG^^}[@]"
       ;;
     h)
       echo "Usage: $(basename $0) [-v] [-h] [-f name] [-c 'command']" >&2
@@ -34,20 +35,3 @@ while getopts ':f:c:hv' OPTION; do
       ;;
   esac
 done
-
-if [[ "$comm" ]] && [[ "$classroom" ]]; then
-  for i in "${!classroom}"; do
-    pc=159.59.9.$i
-    if ping -c 1 $pc >/dev/null; then
-      echo "Running '${comm}' in $pc."
-      ssh root@$pc "${comm}"
-      echo
-    else
-      echo "$pc is off."
-    fi
-  done
-else
-  echo "Missing some argument in the script." >&2
-  echo "Usage: $(basename $0) [-v] [-h] [-f name] [-c 'command']" >&2
-  exit 2
-fi

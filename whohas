@@ -1,0 +1,41 @@
+#!/bin/bash
+
+A=({2..26})
+E=({27..51})
+F=({52..76})
+ET=({77..100})
+
+while getopts ':f:p:' OPTION; do
+  case "$OPTION" in
+    f)
+      classroom="${OPTARG^^}[@]"
+      ;;
+    p)
+      prog="$OPTARG"
+      ;;
+    :)
+      echo "Missing argument for $OPTARG" >&2
+      exit 2
+      ;;
+    ?)
+      echo "Invalid flag." >&2
+      exit 2
+      ;;
+  esac
+done
+
+if [[ "$prog" ]] && [[ "$classroom" ]]; then
+  for i in "${!classroom}"; do
+    pc=159.59.9.$i
+    if ping -c 1 $pc >/dev/null; then
+      echo "Checking if '${prog}' is in $pc."
+      ssh root@$pc "which ${prog}"
+      echo
+    else
+      echo "$pc is off."
+    fi
+  done
+else
+  echo "Missing some argument in the script." >&2
+  exit 2
+fi
